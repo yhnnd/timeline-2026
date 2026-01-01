@@ -1,0 +1,186 @@
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Tools</title>
+  <link rel="stylesheet" href="css/navbar.css">
+  <script src="../js/timeline/navbar.js"></script>
+</head>
+<body>
+  <style>
+h1 {
+  width: 160px;
+  white-space: nowrap;
+  overflow: visible;
+  margin-top: 25px;
+  margin-bottom: 0;
+  border-top: 1px solid #0675c4;
+  border-left: 1px solid #0675c4;
+  box-shadow: -3px -2px 1px 0 yellowgreen;
+  padding-top: 16px;
+  padding-left: 20px;
+  border-top-left-radius: 10px;
+  position: relative;
+  left: -20px;
+}
+pre {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  word-break: break-word;
+}
+.bubble {
+  display: inline-block;
+  background-color: #e9f0f5;
+  border-left: 1px solid #0675c4;
+  padding: 4px 8px;
+  border-radius: 8px;
+  border-top-left-radius: 0;
+  cursor: pointer;
+}
+.bubble.red {
+  background-color: #f7ebec;
+  border-color: #d63638;
+}
+.bubble.green {
+  background-color: #e6f2e8;
+  border-color: #008a20;
+}
+.text {
+  display: inline;
+}
+.text.blue {
+  color: #0675c4;
+}
+.text.red {
+  color: #d63638;
+}
+.text.green {
+  color: #008a20;
+}
+  </style>
+  <div style="display: flex; justify-content: center; margin-bottom: 200px;">
+    <pre style="width: 800px;"><h1>link</h1>
+
+A <div class="bubble">&lt;link&gt;</div> tag will be translated to a <div class="bubble green">&lt;div class="link" onclick="openLink(event)"&gt;</div> tag.
+
+<div class="bubble">&lt;link to="book-reader.html?src=../folder/filename.txt" &gt;</div> will be translated to
+
+<div class="bubble green">&lt;div class="link" onclick="openLink(event)" to="book-reader.html?src=../folder/filename.txt" &gt;</div>
+
+⚠️ <div class="text red">Automatically Enabled.</div>
+
+<h1>img</h1>
+
+A <div class="bubble">&lt;img src="../folder/filename.jpg"&gt;</div> will be recognized as a html <div class="bubble red">img</div> tag.
+
+A Scalable Vector Graphic <span class="bubble">&lt;svg&gt;</span> will be recognized as a html <span class="bubble red">svg</span> tag <b>ONLY</b> when it is written in single line. The opening tag <span class="bubble">&lt;svg&gt;</span> and the closing tag <span class="bubble">&lt;/svg&gt;</span> <b>MUST</b> be in one single line.
+
+⚠️ <div class="text red">This function is disabled by default. Use </div><div class="bubble text red">@command("enable-image-recognition")</div><div class="text red"> to enable this function.</div>
+
+<h1>thumbnail row</h1>
+
+A <div class="bubble">&lt;div class="row"&gt;</div> will be recognized as a html <div class="bubble red">div</div> tag.
+
+A <div class="bubble">&lt;div class="row"&gt;</div> can wrap a list of <div class="bubble">&lt;img class="thumbnail"&gt;</div> and will display a group of images in one line.
+
+<i>If the image with class name <div class="bubble red">thumbnail</div> is too small, use <div class="bubble red">thumbnail-2x</div>.</i>
+
+⚠️ <div class="text red">Automatically Enabled.</div>
+
+<h1>border</h1>
+
+<div class="bubble"
+>&lt;border&gt;
+&lt;/border&gt;</div> will be translated to
+
+<div class="bubble green"
+>&lt;div class="border"&gt;
+&lt;/div&gt;</div>
+
+⚠️ <div class="text red">This function is disabled by default. Use </div><div class="bubble text red">@command("enable-border-recognition")</div><div class="text red"> to enable this function.</div>
+
+<h1>video</h1>
+
+<div class="bubble">@video resources/35_1713060169.mp4</div>
+
+will be translated to
+
+<div class="bubble green"
+>&lt;video width="100%" controls="" style="width: 100%;"&gt;
+  &lt;source src="resources/35_1713060169.mp4" type="video/mp4"&gt;
+&lt;/video&gt;
+</div>
+
+<h2 style="font-weight: lighter;">YouTube Video</h2>
+<div class="bubble">@video width="790" height="444" src="https://www.youtube.com/embed/VXGRZ6O38ec" frameborder="0" allowfullscreen</div>
+
+will be translated to
+
+<div class="bubble green">&lt;iframe width="790" height="444" src="https://www.youtube.com/embed/VXGRZ6O38ec" frameborder="0" allowfullscreen=""&gt;&lt;/iframe&gt;</div>
+
+⚠️ <div class="text red">This function is disabled by default. Use </div><div class="bubble text red">@command("enable-video-recognition")</div><div class="text red"> to enable this function.</div>
+
+<h1>Map</h1>
+
+<div class="bubble">@map {id: 'map_2', center: {lat: 39.06508132468046, lng: 117.10561037063599}, zoomLevel: 15}</div>
+
+will be translated to a Leaflet map.
+
+⚠️ <div class="text red">This function is disabled by default. You can enable it in Settings.</div>
+
+<h1>Bubble</h1>
+
+<div class="bubble">&lt;bubble&gt;<div class="text red">text content</div>&lt;/bubble&gt;</div>
+
+will be translated to
+
+<div class="bubble green">&lt;div&gt; class=&quot;bubble message-bubble&quot;&gt;<div class="text red">text content</div>&lt;/div&gt;</div>.
+
+⚠️ <div class="text red">Automatically Enabled.</div>
+
+<h1>Tools</h1>
+
+<h2>file list to html tags</h2><button onclick="toggleExample()">example</button>
+
+<div style="display: none;" id="example"><div style="position: relative;"><div style="position: absolute; top: 0; left: -49px;" onclick="toggleExample()"><img src="img/tools-example.png" style="width: 900px;"></div></div></div>
+
+<textarea style="width: 100%; min-height: 400px; height: max-content;" id="editorA"></textarea>
+<div style="display: flex; gap: 10px;">
+  <button style="width: max-content; height: max-content; padding: 5px 10px;" onclick="generateLinks()">generate links</button>
+  <button style="width: max-content; height: max-content; padding: 5px 10px;" onclick="generateImgs()">generate img tags</button>
+  <button style="width: max-content; height: max-content; padding: 5px 10px;" onclick="generateImgs2()">generate img tags with number</button>
+  <button style="width: max-content; height: max-content; padding: 5px 10px;" onclick="generateThumbnailRow()">generate thumbnail row</button>
+</div>
+<textarea style="width: 100%; min-height: 400px; height: max-content;" id="editorB"></textarea>
+</pre>
+  </div>
+  <script>
+    function generateLinks() {
+      const fileList = editorA.value.replaceAll(' ', '\n').split('\n').filter(e => !!e)
+      editorB.value = fileList.map(line => '<link to="' + line + '"></link>').join('\n')
+    }
+
+    function generateImgs() {
+      const fileList = editorA.value.replaceAll(' ', '\n').split('\n').filter(e => !!e)
+      editorB.value = fileList.map(line => '<img src="../' + line + '" alt="">').join('\n')
+    }
+
+    function generateImgs2() {
+      const fileList = editorA.value.replaceAll(' ', '\n').split('\n').filter(e => !!e)
+      let i = 0;
+      editorB.value = fileList.map(line => ++i + '\n<img src="../' + line + '" alt="">\n').join('\n')
+    }
+
+    function generateThumbnailRow() {
+      const fileList = editorA.value.replaceAll(' ', '\n').split('\n').filter(e => !!e)
+      editorB.value = '<div class="row">\n' + fileList.map(line => '<img class="thumbnail" src="../' + line + '" alt="">').join('\n') + "\n</div>"
+    }
+
+    let isExampleVisible = false;
+
+    function toggleExample() {
+      example.style = isExampleVisible ? 'display: none;' : 'display: block; height: 0;'
+      isExampleVisible = !isExampleVisible
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,102 @@
+<html>
+<head>
+    <title>Calendar</title>
+</head>
+<body>
+    <div class="calendar-wrapper">
+        <div class='calendar'></div>
+    </div>
+    <script src='../js/vendor/full-calendar.min.js'></script>
+    <script>
+function openFileFromCalendar(link, d) {
+    if (!link) {
+        return;
+    }
+    if (window.isIframe) {
+        window.parent.postMessage({from: "calendar", command: "gotoUrl", value: link}, "*");
+        d && sessionStorage.setItem("calendar-initial-date", d);
+    } else {
+        window.open(link, "_self");
+    }
+}
+
+function getBodyHeight() {
+    const body = document.body, html = document.documentElement;
+    return Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight);
+}
+
+function renderCalendar({calendarEvents}) {
+    const calendarEl = document.getElementsByClassName('calendar')[0];
+    const calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: "multiMonthYear",
+        initialDate: sessionStorage.getItem("calendar-initial-date") || "2025-01-01",
+        multiMonthMaxColumns: 2,
+        headerToolbar: {
+            left: "prev,next",
+            center: "title",
+            right: "today"
+        },
+        buttonText: {
+            today: "Latest Year"
+        },
+        events: calendarEvents || []
+    });
+    calendar.render();
+    window.parent.postMessage({from: "calendar", command: "setIframeHeight", value: `${getBodyHeight()}px`}, "*");
+    document.querySelector(".fc-today-button").addEventListener("click", function() {
+        sessionStorage.removeItem("calendar-initial-date");
+    });
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    const params = new URLSearchParams(window.location.search);
+    for (const [key, value] of params) {
+        if (key === "is-iframe" && value === "true") {
+            window.isIframe = true;
+        }
+    }
+    window.addEventListener("message", (event) => {
+        if (event.data && event.data.from === "index.html") {
+            event.data.command === "setCalendarEvents" && renderCalendar({
+                "calendarEvents": event.data.value
+            });
+        }
+    });
+    window.parent.postMessage({from: "calendar", command: "fetchCalendarEvents"}, "*");
+});
+    </script>
+    <style>
+.calendar-wrapper {
+    font-size: 14px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    overflow: hidden;
+    font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+}
+
+.calendar {
+    margin: 20px;
+    width: min(calc(2 * 512px), calc(100% - 40px));
+}
+
+.fc .fc-view-harness {
+    height: auto!important;
+}
+
+.fc .fc-view-harness-active > .fc-view {
+    position: static!important;
+}
+
+.fc .fc-button {
+    padding: 4px 8px;
+}
+
+.fc .fc-today-button[disabled] {
+    visibility: hidden;
+}
+    </style>
+</body>
+</html>

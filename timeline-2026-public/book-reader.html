@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>reader</title>
+    <link rel="stylesheet" href="css/colors.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/book-reader.css">
+    <link rel="stylesheet" href="css/search.css">
+    <link rel="stylesheet" href="css/ios-button.css">
+    <link rel="stylesheet" href="css/navbar.css">
+    <script src="../js/timeline/ios-button-2024.js"></script>
+    <script src="../js/timeline/navbar.js"></script>
+    <link rel="stylesheet" href="css/leaflet.css">
+    <link rel="stylesheet" href="css/at-sign-map.css">
+</head>
+<body>
+    <div class="search-bar">
+        <div></div>
+        <div class="search-keyword"></div>
+        <button class="close-button" onclick="closeSearch(this)">close</button>
+    </div>
+    <div class="search-backdrop">
+        <div class="search">
+            <div class="search-result"></div>
+        </div>
+    </div>
+    <div class="popup" disabled>
+        <div class="notice">
+            <div class="inner-square">
+                <div style="display: flex;flex-direction: column;gap: 8px;margin: 8px 12px 0 12px;align-items: center;height: 100%;">
+                    <div style="color: var(--studio-green-60);">Matched Result</div>
+                    <div matched-marker></div>
+                </div>
+                <div style="display: flex;flex-direction: row;justify-content: center;margin: 0 0 16px 0;">
+                    <div style="color: var(--studio-green-60);margin: auto 20px auto 0;">You can click this to go to the matched result.</div>
+                    <a goto-matched style="font-size: 0;cursor: pointer;white-space: nowrap;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="var(--studio-green-60)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <circle cx="12" cy="12" r="10"/><path d="M16 12l-4 4-4-4M12 8v7"/></svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="toggle" onclick="this.parentElement.classList.toggle('opened');sessionStorage.setItem('popup-is-closed-by-user', !this.parentElement.classList.contains('opened'));">
+            <div class="inner-circle" style="display: flex;align-items: center;justify-content: center;width: 50px;height: 50px;border-radius: 50%;margin: auto;">
+                <div class="arrow-close" style="position: relative;top: 1px;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg>
+                </div>
+                <div class="arrow-open" style="position: relative;top: 3px;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="gray" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+                </div>
+            </div>
+        </div>
+    </div>
+    <style>
+.popup[disabled] {
+    display: none;
+}
+.popup {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    min-height: min-content;
+    height: 0;
+    background-color: transparent;
+    transition: height .1s linear, background-color .1s linear;
+}
+.popup:not(.opened) {
+    position: relative;
+}
+.popup:not(.opened) > .toggle {
+    position: absolute;
+    top: 0;
+    transform: scale(.7) translateY(-19.5px);
+}
+.popup:not(.opened) > .toggle:hover {
+    background-color: limegreen;
+}
+.popup:not(.opened) > .toggle:hover > .inner-circle {
+    background-color: white;
+}
+.popup:not(.opened) > *:not(.toggle) {
+    display: none!important;
+}
+.popup.opened {
+    background-color: darkgray;
+    height: 280px;
+    box-shadow: inset 0 0 30px 0 gray;
+}
+.popup > .notice {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: min(512px, 100%);
+    height: 215px;
+    min-height: 215px;
+    box-shadow: inset 0 0 4px 0 gray;
+    border-radius: 5px;
+    margin: 16px auto 10px auto;
+}
+.popup > .notice > .inner-square {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: stretch;
+    width: min(496px, 100%);
+    height: 200px;
+    min-height: 200px;
+    max-height: 200px;
+    box-shadow: 0 0 5px 0 gray;
+    border-radius: 4.5px;
+    background-color: var(--studio-yellow-0);
+}
+.popup > .notice [matched-marker] {
+    padding: 3px;
+    height: 100px;
+    overflow-y: auto;
+}
+.popup > .notice a:active > svg {
+    stroke: var(--studio-yellow-30);
+}
+.popup > .toggle {
+    display: flex;
+    justify-self: flex-end;
+    width: 65px;
+    min-width: 65px;
+    max-width: 65px;
+    height: 65px;
+    min-height: 65px;
+    max-height: 65px;
+    border-radius: 50%;
+    margin-top: 10px;
+    cursor: pointer;
+    box-shadow: inset 0 0 1px 0 darkgray;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -webkit-user-drag: none;
+    .arrow-open {display: block}
+    .arrow-close {display: none}
+}
+.popup.opened > .toggle {
+    margin-top: auto;
+    margin-bottom: 10px;
+    box-shadow: inset 0 0 4px 0 gray;
+    .arrow-open {display: none}
+    .arrow-close {display: block}
+}
+.popup > .toggle > .inner-circle {
+    box-shadow: 0 0 2px 0 darkgray;
+}
+.popup.opened > .toggle > .inner-circle {
+    box-shadow: 0 0 5px 0 gray;
+}
+    </style>
+    <div class="desktop" style="display: none;">
+        <div class="buttons-previous-and-next no-print" style="position: relative;width: 0;height: auto;">
+            <div style="position: sticky;top: 54px;left: 0;">
+                <div style="position: relative;left: 10px;white-space: nowrap;">
+                    <svg onclick="gotoPrevious()" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+                </div>
+            </div>
+        </div>
+        <div class="buttons-previous-and-next no-print" style="position: relative;left: calc(100vw - 25px);width: 0;height: auto;">
+            <div style="position: sticky;top: 54px;right: 0;">
+                <div style="position: relative;right: 10px;white-space: nowrap;">
+                    <svg onclick="gotoNext()" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+                </div>
+            </div>
+        </div>
+        <div class="left">
+            <div class="container container-1">
+                <pre></pre>
+            </div>
+        </div>
+        <div class="right hidden">
+            <div class="container container-2">
+                <pre></pre>
+            </div>
+        </div>
+    </div>
+    <div class="desktop-2" style="display: none; width: 100vw; height: 100vh;">
+        <iframe src="" frameborder="0" style="width: 100%; height: 100%;"></iframe>
+    </div>
+    <div id="inspectImageWrapper" class="inspect-image-wrapper"></div>
+    <script src="../js/vendor/param.js"></script>
+    <script src="../js/timeline/people-names.js"></script>
+    <script src="../js/timeline/books-index.js"></script>
+    <script src="../js/vendor/localforage.nopromises.min.js"></script>
+    <script src="../js/timeline/ajax.js"></script>
+    <script src="../js/vendor/leaflet.js"></script>
+    <script src="../js/timeline/at-sign-map.js"></script>
+    <script src="../js/timeline/book-reader.js" defer></script>
+    <script src="../js/timeline/search.js"></script>
+    <script>
+window.setPreviousAndNextButtonEnabledStatus = function () {
+    let noPrevious = false, noNext = false;
+    const currentArticle = window.currentArticle;
+    let isArticleIndexValid = false;
+    if (currentArticle && !currentArticle.isTrim) {
+        for (const book of window.books) {
+            if (book === undefined || book.indexList === undefined || !book.indexList.length) {
+                continue;
+            }
+            for (let i = 0; i < book.indexList.length; ++i) {
+                const {fakeUrl, realUrl} = book.indexList[i];
+                if (realUrl === currentArticle.realUrl || fakeUrl === currentArticle.fakeUrl) {
+                    isArticleIndexValid = true;
+                    if (i === 0) {
+                        noPrevious = true;
+                    }
+                    if (i === book.indexList.length - 1) {
+                        noNext = true;
+                    }
+                }
+            }
+        }
+    }
+    if (!isArticleIndexValid || noPrevious || currentArticle.isTrim) {
+        document.querySelectorAll('[onclick="gotoPrevious()"]').forEach(btn => {
+            btn.setAttribute("disabled", true);
+        });
+    } else {
+        document.querySelectorAll('[onclick="gotoPrevious()"]').forEach(btn => {
+            btn.removeAttribute("disabled");
+        });
+    }
+    if (!isArticleIndexValid || noNext || currentArticle.isTrim) {
+        document.querySelectorAll('[onclick="gotoNext()"]').forEach(btn => {
+            btn.setAttribute("disabled", true);
+        });
+    } else {
+        document.querySelectorAll('[onclick="gotoNext()"]').forEach(btn => {
+            btn.removeAttribute("disabled");
+        });
+    }
+}
+
+function setUrl(setFunc) {
+    const url = new URL(window.location);
+    setFunc(url);
+    history.replaceState({}, "", url);
+}
+
+function setNewSrc(newFakeUrl) {
+    runSyncFunctions(function () {
+        setUrl(function(url) {
+            url.searchParams.delete("trm");
+            url.searchParams.delete("t0");
+            url.searchParams.delete("t1");
+            url.searchParams.set("fakeUrl", newFakeUrl);
+        });
+    }, function () {
+        const realUrl = window.parseFakeUrl(newFakeUrl, {fakeUrl: newFakeUrl});
+        window.currentArticle = {"realUrl": realUrl, "fakeUrl": newFakeUrl};
+    }, window.setPreviousAndNextButtonEnabledStatus);
+}
+
+function gotoPrevious() {
+    const currentArticle = window.currentArticle;
+    if (!currentArticle || currentArticle.isTrim) {
+        return;
+    }
+    for (const book of window.books) {
+        if (book === undefined || book.indexList === undefined || !book.indexList.length) {
+            continue;
+        }
+        for (let i = 0; i < book.indexList.length; ++i) {
+            const {fakeUrl, realUrl} = book.indexList[i];
+            if (realUrl === currentArticle.realUrl || fakeUrl === currentArticle.fakeUrl) {
+                if (i > 0) {
+                    const newSrc = book.indexList[i - 1].realUrl;
+                    const newFakeUrl = book.indexList[i - 1].fakeUrl;
+                    setNewSrc(newFakeUrl);
+                    openFile(newSrc);
+                }
+            }
+        }
+    }
+}
+
+function gotoNext() {
+    const currentArticle = window.currentArticle;
+    if (!currentArticle || currentArticle.isTrim) {
+        return;
+    }
+    for (const book of window.books) {
+        if (book === undefined || book.indexList === undefined || !book.indexList.length) {
+            continue;
+        }
+        for (let i = 0; i < book.indexList.length; ++i) {
+            const {fakeUrl, realUrl} = book.indexList[i];
+            if (realUrl === currentArticle.realUrl || fakeUrl === currentArticle.fakeUrl) {
+                if (i < book.indexList.length - 1) {
+                    const newSrc = book.indexList[i + 1].realUrl;
+                    const newFakeUrl = book.indexList[i + 1].fakeUrl;
+                    setNewSrc(newFakeUrl);
+                    openFile(newSrc);
+                }
+            }
+        }
+    }
+}
+    </script>
+</body>
+</html>

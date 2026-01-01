@@ -1,0 +1,147 @@
+.book-list>li {
+  height: 25px;
+}
+
+.hover-detecting-area {
+  position: absolute;
+  top: -120px;
+  right: -316px;
+  width: 316px;
+  height: 836px;
+}
+
+.sidebar-container-absolute-position {
+  position: absolute;
+  width: 0;
+  right: -1px;
+  top: -32px;
+}
+
+.sidebar-container {
+  perspective: 800px;
+  perspective-origin: center;
+}
+
+.sidebar.rotate {
+  width: 200px;
+  transform: rotateY(-33.333deg);
+  transform-origin: top left;
+  background-color: white;
+  padding: 30px 60px 30px 30px;
+  outline: 1px solid rgb(65 105 225 / 50%);
+  transition: all .1s;
+}
+
+.timeline {
+  border-left: 10px solid royalblue;
+  width: 100%;
+  padding: 25px 0;
+  background-color: white;
+  transform-origin: top left;
+}
+
+.timeline>.node {
+  padding-top: 2px;
+  padding-bottom: 2px;
+  margin-left: 20px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 13px;
+  line-height: 19px;
+  position: relative;
+  cursor: pointer;
+}
+
+.timeline>.node>span {
+  display: inline-block;
+}
+
+.timeline>.node>span>span {
+  background-color: white;
+  display: inline-block;
+  padding: 1px 4px 1px 4px;
+}
+
+.timeline>.node::before {
+  width: 6px;
+  height: 5px;
+  border: 4px solid transparent;
+  content: '';
+  background-color: transparent;
+  position: absolute;
+  top: 5px;
+  left: -32px;
+  z-index: 10;
+}
+
+.timeline>.node::after {
+  width: 25px;
+  content: '';
+  border-top: 2px dashed rgba(0, 0, 0, .1);
+  position: absolute;
+  top: 11px;
+  left: -25px;
+  transition: unset;
+}
+
+.timeline>.node:hover::after {
+  top: 10px;
+  background-color: royalblue;
+  border-top: unset;
+  height: 4px;
+}
+
+.timeline>.node:hover::before {
+  background-color: white;
+  border-color: black;
+}
+
+.timeline>.node:hover>span>span {
+  outline: 3px solid royalblue;
+}
+
+.timeline>.node>span::before,
+.timeline>.node>span::after {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: -556px;
+  z-index: 13;
+  content: '';
+  height: 25px;
+  width: 300px;
+}
+
+.timeline>.node>span::after {
+  width: 256px;
+  left: -256px;
+}
+
+.timeline:has(:hover)>.node>span::after {
+  display: block;
+}
+
+.hover-detecting-area-container:has(:hover) .timeline>.node>span::before {
+  display: block;
+  height: 25px;
+  outline: 2px dashed rgba(0, 0, 0, .1);
+  outline-offset: -1px;
+}
+
+.timeline>.node:hover>span::before {
+  outline: 2px solid royalblue !important;
+}
+
+.hover-detecting-area-container:has(:hover) .sidebar.rotate {
+  transform: unset;
+  outline: 5px solid rgb(65 105 225 / 50%);
+  outline-offset: -4px;
+}
+
+.hover-detecting-area-container:has(:hover) .timeline {
+  background-color: rgb(65 105 225 / 15%);
+}
+
+.hover-detecting-area-container:has(:hover) .timeline>.node::after {
+  width: 253px;
+  left: -256px;
+}
